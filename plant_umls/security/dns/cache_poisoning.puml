@@ -1,0 +1,30 @@
+@startuml
+actor Attacker
+participant "DNS Client" as Client
+participant "DNS Server" as DNS
+participant "Legitimate DNS Server" as LegitDNS
+
+== Attack Initialization ==
+
+Client -> DNS: Request domain (e.g., example.com)
+Attacker -> DNS: Fake DNS response (e.g., example.com -> 1.2.3.4)
+DNS -> LegitDNS: Forward DNS query
+LegitDNS -> DNS: Return correct IP (e.g., example.com -> 5.6.7.8)
+DNS -> Client: Return fake IP (1.2.3.4)
+
+note right of DNS
+  Cache is poisoned with fake IP
+end note
+
+== Prevention Measures ==
+
+note right of DNS
+  To prevent DNS cache poisoning:
+  1. **Use Randomized Source Ports and Transaction IDs**: Ensure that DNS servers use random source ports and transaction IDs to make it harder for attackers to guess the correct values.
+  2. **Implement DNSSEC**: Deploy DNS Security Extensions (DNSSEC) to provide cryptographic assurance of the integrity and authenticity of DNS responses.
+  3. **Configure Shorter Cache Times**: Use shorter Time-to-Live (TTL) values for DNS records to minimize the impact of cache poisoning by reducing the time an entry is cached.
+  4. **Monitor DNS Traffic**: Implement monitoring and logging to detect unusual patterns or responses that could indicate an attempted poisoning attack.
+  5. **Keep DNS Software Updated**: Regularly update DNS server software to patch known vulnerabilities and enhance security.
+end note
+
+@enduml

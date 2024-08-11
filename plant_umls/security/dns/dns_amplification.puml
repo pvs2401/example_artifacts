@@ -1,0 +1,36 @@
+@startuml
+actor Attacker
+participant "DNS Server (8.8.8.8)" as DNS
+participant "Target (198.51.100.2)" as Target
+
+== Attack Initialization ==
+
+Attacker -> DNS: DNS query (ANY request for example.com) with spoofed IP (198.51.100.2)
+DNS -> DNS: Process query (e.g., prepare large response data for example.com)
+note right of DNS
+  Query requests all records for example.com
+end note
+
+== Amplified Response ==
+
+DNS -> Target: Large DNS response for example.com
+note right of Target
+  Response contains extensive data (amplified)
+end note
+Target -> Target: Overwhelmed with traffic (e.g., service disruption)
+
+note right of DNS
+  The DNS server sends a much larger response than the original query
+end note
+
+== Prevention Measures ==
+
+note right of DNS
+  To prevent DNS amplification attacks:
+  1. **Use Rate Limiting**: Limit the rate of DNS responses to mitigate large-scale attacks.
+  2. **Disable Open DNS Resolvers**: Ensure DNS servers are not publicly accessible and do not allow recursive queries from unauthorized IPs.
+  3. **Implement Response Rate Limiting (RRL)**: Limit the number of responses sent to the same IP address in a given timeframe.
+  4. **Use DNS Security Extensions (DNSSEC)**: Validate DNS responses to prevent cache poisoning and spoofing.
+end note
+
+@enduml
